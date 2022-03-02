@@ -1,9 +1,13 @@
 // Import libraries
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.126.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/OrbitControls.js";
-import rhino3dm from "https://cdn.jsdelivr.net/npm/rhino3dm@7.11.1/rhino3dm.module.js";
-import { RhinoCompute } from "https://cdn.jsdelivr.net/npm/compute-rhino3d@0.13.0-beta/compute.rhino3d.module.js";
-import { Rhino3dmLoader } from "https://cdn.jsdelivr.net/npm/three@0.124.0/examples/jsm/loaders/3DMLoader.js";
+import { TransformControls } from "https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/TransformControls.js";
+import { Rhino3dmLoader } from "https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/loaders/3DMLoader.js";
+import rhino3dm from "https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js";
+
+// set up loader for converting the results to threejs
+const loader = new Rhino3dmLoader();
+loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/");
 
 const definitionName = "Exp Gh.gh";
 
@@ -32,6 +36,81 @@ rhino3dm().then(async (m) => {
   //RhinoCompute.apiKey = getAuth( 'RHINO_COMPUTE_KEY' )  // RhinoCompute server api key. Leave blank if debugging locally.
 
   RhinoCompute.url = "http://localhost:8081/"; //if debugging locally.
+
+  /**
+ * Call appserver
+ */
+async function compute() {
+  showSpinner(true);
+
+  // initialise 'data' object that will be used by compute()
+  const data = {
+    definition: definition,
+    inputs: {
+      dimension: dimension_slider.valueAsNumber,
+      height: height_slider.valueAsNumber,
+      points: points,
+    },
+  };
+
+  console.log(data.inputs);
+
+  const request = {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  };
+
+  try {
+    const response = await fetch("/solve", request);
+
+    if (!response.ok) throw new Error(response.statusText);
+
+    const responseJson = await response.json();
+    collectResults(responseJson);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/**
+ * Parse response
+ */
+function collectResults(responseJson) {
+  const values = responseJson.values;
+
+  console.log(values);
+
+  // clear doc
+  try {
+    if (doc !== undefined) doc.delete();
+  } catch {}
+
+  //console.log(values)
+  doc = new rhino.File3dm();
+
+  // for each output (RH_OUT:*)...
+  for (let i = 0; i < values.length; i++) {
+    // ...iterate through data tree structure...
+    for (const path in values[i].InnerTree) {
+      const branch = values[i].InnerTree[path];
+      // ...and for each branch...
+      for (let j = 0; j < branch.length; j++) {
+        // ...load rhino geometry into doc
+        const rhinoObject = decodeItem(branch[j]);
+        if (rhinoObject !== null) {
+          // console.log(rhinoObject)
+          doc.objects().add(rhinoObject, null);
+        }
+      }
+    }
+  }
+
+  if (doc.objects().count < 1) {
+    console.error("No rhino objects to load!");
+    showSpinner(false);
+    return;
+  }
 
   // load a grasshopper file!
 
