@@ -107,8 +107,8 @@ async function compute() {
   const data = {
     definition: definition,
     inputs: {
-      dimension: dimension_slider.valueAsNumber,
-      height: height_slider.valueAsNumber,
+      Expansion: Expansion_slider.valueAsNumber,
+      Scale: Scale_slider.valueAsNumber,
       points: points,
     },
   };
