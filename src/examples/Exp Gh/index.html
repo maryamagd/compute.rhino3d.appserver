@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Expandables</title>
+        <style>
+            * {
+              box-sizing: border-box;
+            }
+
+            body {
+              font-family: Arial, Helvetica, sans-serif;
+            }
+            
+            /* Style the header */
+            .header {
+              grid-area: header;
+              background-color: #b2c5d6;
+              padding: 30px;
+              text-align: center;
+              font-size: 35px;
+            }
+            
+            /* The grid container */
+            .grid-container {
+              display: grid;
+              grid-template-areas: 
+                'header header header header header header' 
+                'left middle middle middle middle right' 
+                'footer footer footer footer footer footer';
+              /* grid-column-gap: 10px; - if you want gap between the columns */
+            } 
+         
+            .left,
+            .middle,
+            .right {
+              padding: 10px;
+              height: 100px;
+            }
+            
+            /* Style the left column */
+            .left {
+              grid-area: left;
+            }
+            
+            /* Style the middle column */
+            .middle {
+              grid-area: middle;
+              text-align: center;
+            }
+            
+            /* Style the right column */
+            .right {
+              grid-area: right;
+            }
+            
+            /* Style the footer */
+            .footer {
+              grid-area: footer;
+              background-color: rgb(85, 109, 122);
+              padding: 10px;
+              text-align: center;
+            }
+            
+            /* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+            @media (max-width: 600px) {
+              .grid-container  {
+                grid-template-areas: 
+                  'header header header header header header' 
+                  'left left left left left left' 
+                  'middle middle middle middle middle middle' 
+                  'right right right right right right' 
+                  'footer footer footer footer footer footer';
+              }
+            }
+            #loader {
+                border: 5px solid #f3f3f3; /* Light grey */
+                border-top: 5px solid #93d5e9; /* Grey */
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                z-index: 2;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            </style>
+        </head>
+    <body>
+        <div class="grid-container">
+            <div class="header">
+              <h2>"expandables"</h2>
+            </div>
+            
+            <div class="left" style="background-color:rgb(97, 97, 112);">Download
+                <div id="ui">
+                    <button id="downloadButton" enabled>Get Your Geometry</button>
+                </div>
+            </div>
+            <div class="middle" style="background-color:rgb(144, 148, 156);">This project was developed for the Data Management course in MaCAD at IAAC
+            </div>  
+            <div class="right" style="background-color:rgb(85, 109, 122);">Tweaking
+                <div id="overlay">
+                    <div>
+                        <input type="range" id="Expansion" name="Expansion" min="0" max="1" value="0.5" step="0.1">
+                        <label for="Expansion">Expansion</label>
+                    </div>
+                    <div>
+                        <input type="range" id="Scale" name="Scale" min="1" max="10" value="9" step="1">
+                        <label for="Scale">Scale</label>
+                    </div>
+                </div>
+            
+            <div class="footer">
+              <p></p>
+            </div>
+          </div>
+        <div id="loader"></div> 
+        <div id="container">
+            </div>
+        </div>
+        <script type="module" src="script.js"></script>
+    </body>
+</html>
