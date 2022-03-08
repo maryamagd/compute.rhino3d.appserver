@@ -6,7 +6,12 @@ The project aims to give an overview of a public space canopy and its elements t
 ## Plugin
 - Kangaroo Physics (for one aspect only, not completely relying on it)
 
-## Data Flow
+## Parametric Data
 - **Expansion Phase**: Deployment apertures
-- **Structural Members**: Selecting cross-section options
 - **Movable Points**: For support location
+- **U & V Divisions**: Increase or Decrease
+
+## Visually Static Data
+- Rhino Context Model
+- Google Map API
+- CubeMap
