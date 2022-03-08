@@ -1,7 +1,7 @@
 # Deployable Structure
 A transitioning design with integrated fabric
 
-The project aims to give an overview of a deployable structure and its elements through transitioning phases with flexibility in adding points with each phase
+The project aims to give an overview of a public space canopy and its elements through progressing construction/ expansion phases, adding altering supports with each phase.
 
 ## Plugin
 - Kangaroo Physics (for one aspect only, not completely relying on it)
