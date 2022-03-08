@@ -9,4 +9,4 @@ The project aims to give an overview of a deployable structure and its elements 
 ## Data Flow
 - **Expansion Phase**: Deployment apertures
 - **Structural Members**: Selecting cross-section options
-- **Adaptive Panel**: Through Kangaroo simulations
+- **Movable Points**: For support location
