@@ -23,6 +23,11 @@ const cameraH = 50;
 //change the camera z position
 camera.position.z = cameraH;
 
+const geometry = new THREE.PlaneGeometry( 1000, 1000 );
+const material = new THREE.MeshBasicMaterial( {color: 0xe4b8ab, side: THREE.DoubleSide} );
+const plane = new THREE.Mesh( geometry, material )
+scene.add( plane );
+
 //create renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -40,12 +45,11 @@ const interactionManager = new InteractionManager(
     orange: createDonuts({ color: 0xf9ad81, x: -20, y: -10 }),
     yellow: createDonuts({ color: 0xfff799, x: 20, y: -20 }),
     green: createDonuts({ color: 0xa3d39c, x: 10, y: 20 }),
-    blue: createDonuts({ color: 0x6dcff6, x: -15, y: 20 }),
-    purple: createDonuts({ color: 0xbd8cbf, x: -40, y: 20 }),
-    cyan: createDonuts({ color: 0x7accc8, x: -50, y: -20 })
+    blue: createDonuts({ color: 0x6dcff6, x: -10, y: 20 }),
+    purple: createDonuts({ color: 0xbd8cbf, x: -30, y: 10 }),
+    cyan: createDonuts({ color: 0x7accc8, x: 30, y: 10 })
   };
 
-  
 //Adding click handler
 for (const [name, object] of Object.entries(donuts)) {
   object.addEventListener("click", (event) => {
@@ -55,32 +59,54 @@ for (const [name, object] of Object.entries(donuts)) {
     console.log(`${name} donut was clicked`);
     //identify the starting and the target point
     const donut = event.target;
-    const coords = { x: camera.position.x, y: camera.position.y };
-    new TWEEN.Tween(coords)
-      .to({ x: donut.position.x, y: donut.position.y })
-      .onUpdate(() =>
-        camera.position.set(coords.x, coords.y, camera.position.z)
-      )
-      .start();
-  });
+    //using tween function to smoothly move from one position to another one
+    // backup original rotation
+    var startRotation = camera.quaternion.clone();
+    // final rotation (with lookAt)
+    camera.lookAt( donut.position );
+    var endRotation = camera.quaternion.clone();
+    // revert to original rotation
+    camera.quaternion.copy( startRotation );
+    // Tween
+    var lookAtTween = new TWEEN.Tween( camera.quaternion ).to( endRotation, 600 ).start();
+    });
   
-  interactionManager.add(object);
+    interactionManager.add(object);
   scene.add(object);
 }
 
   
 document.getElementById("home").addEventListener("click", () => {
-    //using tween function to smoothly move from one position to another one
-    const coords = { x: camera.position.x, y: camera.position.y, z:camera.position.z };
-    var tween = new TWEEN.Tween(coords)
-      .to({ x: 0 , y: 0, z: cameraH }, 5000)
-      .easing(TWEEN.Easing.Quadratic.Out)
-      .onUpdate(() =>
-        camera.position.set(coords.x, coords.y, coords.z)
-      )
-      .start();
+    // backup original rotation
+    var startRotation = camera.quaternion.clone();
+    // final rotation (with lookAt)
+    camera.lookAt( 0,0,0 );
+    camera.position.set(0,0,cameraH);
+    var endRotation = camera.quaternion.clone();
+    // revert to original rotation
+    camera.quaternion.copy( startRotation );
+    // Tween
+    var lookAtTween = new TWEEN.Tween( camera.quaternion ).to( endRotation, 600 )
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .start();
+    
 });
 
+document.getElementById("view01").addEventListener("click", () => {
+  // backup original rotation
+  var startRotation = camera.quaternion.clone();
+  // final rotation (with lookAt)
+  camera.lookAt( 0,0,0 );
+  camera.position.set(-20,15,20);
+  var endRotation = camera.quaternion.clone();
+  // revert to original rotation
+  camera.quaternion.copy( startRotation );
+  // Tween
+  var lookAtTween = new TWEEN.Tween( camera.quaternion ).to( endRotation, 600 )
+  .easing(TWEEN.Easing.Quadratic.Out)
+  .start();
+  
+});
 
 
 //creating a light element
