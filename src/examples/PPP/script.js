@@ -14,7 +14,6 @@ const data = {
   inputs: getInputs()
 }
 
-
 const definition = "Canopy_maker.gh";
 
 // setup input change events
