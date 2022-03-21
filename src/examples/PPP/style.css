@@ -11,7 +11,7 @@ input[type=range] { width: 100%; }
   z-index: 1;
   width: 250px;
   height: 100vh;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(23, 56, 117, 0.1);
 }
 #overlay div { padding: 5px 10px; }
 /*///////////////////////////////////////////////////////////////////////////*/

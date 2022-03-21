@@ -81,7 +81,7 @@ downloadButton.onclick = download
 }
 
 // more globals
-let scene, camera, renderer, controls
+let scene, camera, renderer, controls, area
 
 /**
  * Sets up the scene, camera, renderer, lights and controls and starts the animation
@@ -130,7 +130,7 @@ function init() {
     })
     scene.add(object)
   })
-  }
+}
 
 /**
  * Call appserver
@@ -187,30 +187,33 @@ function collectResults(responseJson) {
             doc.objects().add(rhinoObject, null)
           //GET VALUES
           if (values[i].ParamName == "RH_OUT:area") {
-          //area = JSON.parse(responseJson.values[i].InnerTree['{ 0; }'][0].data)
+            //area = JSON.parse(responseJson.values[i].InnerTree['{ 0; }'][0].data)
             area = Math.round(branch[j].data)
 
             console.log(area)
           }
+          //console.log(area)
+
           }
         }
       }
     }
 
-    if (doc.objects().count < 1) {
-      console.error('No rhino objects to load!')
-      showSpinner(false)
-      return
-    }
+     //GET VALUES
+     document.getElementById('area').innerText = "Panels Area = " + area + " m2"
 
-    //GET VALUES
-    document.getElementById('area').innerText = "// PANEL AREA = " + area + " m2"
+
 
     if (doc.objects().count < 1) {
       console.error('No rhino objects to load!')
       showSpinner(false)
       return
     }
+
+    // hack (https://github.com/mcneel/rhino3dm/issues/353)
+    const sphereAttrs = new rhino.ObjectAttributes()
+    sphereAttrs.mode = rhino.ObjectMode.Hidden
+    doc.objects().addSphere(new rhino.Sphere([0,0,0], 0.001), sphereAttrs)
 
     // load rhino doc into three.js scene
     const buffer = new Uint8Array(doc.toByteArray()).buffer
@@ -226,7 +229,7 @@ function collectResults(responseJson) {
 
         // clear objects from scene. do this here to avoid blink
         scene.traverse(child => {
-            if (!child.isLight) {
+            if (!child.isLight && child.name !== 'Public_Space') {
                 scene.remove(child)
             }
         })
