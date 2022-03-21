@@ -238,7 +238,6 @@ async function compute() {
 function collectResults(responseJson) {
 
     const values = responseJson.values
-
     // clear doc
     try {
     if( doc !== undefined)
