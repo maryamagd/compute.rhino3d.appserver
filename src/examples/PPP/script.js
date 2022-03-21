@@ -14,8 +14,6 @@ const data = {
   inputs: getInputs()
 }
 
-const definition = "Canopy_maker.gh";
-
 // setup input change events
 const Column_Radius_slider = document.getElementById( 'Column_Radius' )
 Column_Radius_slider.addEventListener( 'mouseup', onSliderChange, false )
@@ -135,6 +133,7 @@ function init() {
     scene.add(object)
   })
 }
+
   function onClick( event ) {
 
     console.log( `click! (${event.clientX}, ${event.clientY})`)
