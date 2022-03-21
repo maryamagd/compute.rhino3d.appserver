@@ -1,4 +1,6 @@
-Designed for BIMSC Data Management - 21
+<h1>PPP: Public Place Project</h1>
+
+Designed for BIMSC Data Management - 21 at MaCAD
 Faculty: David Leon;
 Assistant: Hesham Shawqy
 Student: Maryam Deshmukh
@@ -16,6 +18,3 @@ Visually Static Data
 Rhino Context Model
 OpenStreet API
 CubeMap
-## Other Information
-- [API Endpoints](docs/endpoints.md) the server supports
-- [Client Code](docs/clientcode.md) example for calling the AppServer
