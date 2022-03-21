@@ -101,7 +101,7 @@ function init() {
     .load(["px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png"]);
   scene.background = cubeMap
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    camera.position.set(1, -1, 1) // like perspective view
+    camera.position.set(100, -50, 180) // like perspective view
 
     // create the renderer and add it to the html
     renderer = new THREE.WebGLRenderer({ antialias: true })
