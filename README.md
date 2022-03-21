@@ -1,4 +1,4 @@
-Designed for BIMSC Data Management - 21
+Designed for BIMSC Data Management - 21 at MaCAD
 Faculty: David Leon;
 Assistant: Hesham Shawqy
 Student: Maryam Deshmukh
