@@ -10,7 +10,7 @@ loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
 
 // initialise 'data' object that will be used by compute()
 const data = {
-  definition: 'Canopy_Maker.gh',
+  definition: 'Canopy_maker.gh',
   inputs: getInputs()
 }
 
@@ -38,78 +38,15 @@ let rhino, doc
 
 rhino3dm().then(async m => {
     console.log('Loaded rhino3dm.')
-   rhino = m // global
+    rhino = m
 
     init()
     loadContext()
-    rndPts()
     compute()
 })
 
-function rndPts() {
-  // generate Inital points
-  const startPts = [
-    { x: 1.5, y: 0.3, z: 0 },
-    { x: 2.1, y: 28.9, z: 0 },
-    { x: 33.18, y: 20, z: 0 },
-    { x: 20.54, y: -5.17, z: 0 },
-  ]
-
-  const cntPts = startPts.length
-
-  for (let i = 0; i < cntPts; i++) {
-    const x = startPts[i].x
-    const y = startPts[i].y
-    const z = startPts[i].z
-
-    const pt = "{\"X\":" + x + ",\"Y\":" + y + ",\"Z\":" + z + "}"
-
-    console.log( `x ${x} y ${y}` )
-
-    points.push(pt)
-
-    //viz in three
-    const icoGeo = new THREE.IcosahedronGeometry(5)
-    const icoMat = new THREE.MeshNormalMaterial()
-    const ico = new THREE.Mesh( icoGeo, icoMat )
-    ico.name = 'ico'
-    ico.position.set( x, y, z)
-    scene.add( ico )
-    
-    let tcontrols = new TransformControls( camera, renderer.domElement )
-    tcontrols.enabled = true
-    tcontrols.attach( ico )
-    tcontrols.showZ = false
-    tcontrols.addEventListener( 'dragging-changed', onChange )
-    scene.add(tcontrols)
-    
-  }
-
-}
-
-let dragging = false
-function onChange() {
-  dragging = ! dragging
-  if ( !dragging ) {
-    // update points position
-    points = []
-    scene.traverse(child => {
-      if ( child.name === 'ico' ) {
-        const pt = "{\"X\":" + child.position.x + ",\"Y\":" + child.position.y + ",\"Z\":" + child.position.z + "}"
-        points.push( pt )
-        console.log(pt)
-      }
-    }, false)
-
-    compute()
-
-    controls.enabled = true
-    return 
-}
-
-  controls.enabled = false
-
-}
+const downloadButton = document.getElementById("downloadButton")
+downloadButton.onclick = download
 
   /////////////////////////////////////////////////////////////////////////////
  //                            HELPER  FUNCTIONS                            //
@@ -186,18 +123,14 @@ function init() {
     animate()
 }
 
-function loadContext() {
-loader.load('Public_Space.3dm', function (object) {
-  object.traverse(child => {
+    function loadContext() {
+    loader.load('Public_Space.3dm', function (object) {
+    object.traverse(child => {
     child.name = 'Public_Space'
+    })
+    scene.add(object)
   })
-  scene.add(object)
-})
-}
-
-//calling download function
-const downloadButton = document.getElementById("downloadButton")
-downloadButton.onclick = download
+  }
 
 /**
  * Call appserver
@@ -236,7 +169,7 @@ function collectResults(responseJson) {
     try {
     if( doc !== undefined)
         doc.delete()
-   } catch {}
+    } catch {}
 
     //console.log(values)
     doc = new rhino.File3dm()
@@ -254,7 +187,7 @@ function collectResults(responseJson) {
             doc.objects().add(rhinoObject, null)
           //GET VALUES
           if (values[i].ParamName == "RH_OUT:area") {
-            //area = JSON.parse(responseJson.values[i].InnerTree['{ 0; }'][0].data)
+          //area = JSON.parse(responseJson.values[i].InnerTree['{ 0; }'][0].data)
             area = Math.round(branch[j].data)
 
             console.log(area)
@@ -264,8 +197,14 @@ function collectResults(responseJson) {
       }
     }
 
-     //GET VALUES
-     document.getElementById('area').innerText = "// PANEL AREA = " + area + " m2"
+    if (doc.objects().count < 1) {
+      console.error('No rhino objects to load!')
+      showSpinner(false)
+      return
+    }
+
+    //GET VALUES
+    document.getElementById('area').innerText = "// PANEL AREA = " + area + " m2"
 
     if (doc.objects().count < 1) {
       console.error('No rhino objects to load!')
@@ -303,7 +242,7 @@ function collectResults(responseJson) {
             child.material = mat
           }
         }
-      })
+       })
 
         // add object graph from rhino model to three.js scene
         scene.add( object )
@@ -320,7 +259,7 @@ function collectResults(responseJson) {
 /**
  * Attempt to decode data tree item to rhino geometry
  */
- function decodeItem(item) {
+function decodeItem(item) {
   const data = JSON.parse(item.data)
   if (item.type === 'System.String') {
     // hack for draco meshes
@@ -337,7 +276,7 @@ function collectResults(responseJson) {
  * Called when a slider value changes in the UI. Collect all of the
  * slider values and call compute to solve for a new scene
  */
- function onSliderChange () {
+function onSliderChange () {
   showSpinner(true)
   // get slider values
   let inputs = {}
@@ -363,7 +302,7 @@ function collectResults(responseJson) {
 /**
  * The animation loop!
  */
- function animate() {
+function animate() {
   requestAnimationFrame( animate )
   controls.update()
   renderer.render(scene, camera)
@@ -382,7 +321,7 @@ function onWindowResize() {
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
- function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
+function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
   
   const box = new THREE.Box3();
   
@@ -418,25 +357,25 @@ function onWindowResize() {
 /**
  * This function is called when the download button is clicked
  */
- function download () {
-  // write rhino doc to "blob"
-  const bytes = doc.toByteArray()
-  const blob = new Blob([bytes], {type: "application/octect-stream"})
+function download () {
+    // write rhino doc to "blob"
+    const bytes = doc.toByteArray()
+    const blob = new Blob([bytes], {type: "application/octect-stream"})
 
-  // use "hidden link" trick to get the browser to download the blob
-  const filename = data.definition.replace(/\.gh$/, '') + '.3dm'
-  const link = document.createElement('a')
-  link.href = window.URL.createObjectURL(blob)
-  link.download = filename
-  link.click()
+    // use "hidden link" trick to get the browser to download the blob
+    const filename = data.definition.replace(/\.gh$/, '') + '.3dm'
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.download = filename
+    link.click()
 }
 
 /**
-* Shows or hides the loading spinner
-*/
+ * Shows or hides the loading spinner
+ */
 function showSpinner(enable) {
-if (enable)
-  document.getElementById('loader').style.display = 'block'
-else
-  document.getElementById('loader').style.display = 'none'
+  if (enable)
+    document.getElementById('loader').style.display = 'block'
+  else
+    document.getElementById('loader').style.display = 'none'
 }

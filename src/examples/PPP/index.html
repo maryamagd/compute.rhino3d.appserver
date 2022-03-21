@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" href="data:,">
+        <title>PPP: Public Place Project</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div id="loader"></div> 
+        <div id="container">
+            <div id="overlay">
+                <div><h2>PPP: Public Place Project</h2></div>
+                <div>
+                  <label for="Column_Radius">Column_Radius</label>
+                  <input type="range" id="Column_Radius" min="0.1" max="10" value="2" step="0.1">
+                </div>
+                <div>
+                  <label for="Column_Height">Column_Height</label>
+                  <input type="range" id="Column_Height" min="0.5" max="10" value="3.2" step="0.1">
+                </div>
+                <div>
+                  <label for="U_Divisions">U_Divisions</label>
+                  <input type="range" id="U_Divisions" value="6">
+                </div>
+                <div>
+                  <label for="V_Divisions">V_Divisions</label>
+                  <input type="range" id="V_Divisions" value="10">
+                </div>
+                <div>
+                  <label for="Canopy_Depth">Canopy_Depth</label>
+                  <input type="range" id="Canopy_Depth" min="0.1" max="5" value="2" step="0.1">
+                </div>
+                <div id="area" style=" color:rgb(221, 0, 173) ;"><label for="area">Panel Area</label></div>
+                <div><button id="downloadButton" disabled>Download</button></div>
+                <div><a href="Canopy_maker.gh" download="Canopy_maker.gh.html"></a></div>
+            </div>
+        </div>
+        <script type="module" src="./script.js"></script>
+    </body>
+</html>
