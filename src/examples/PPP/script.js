@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.126.0/build/three.module.js'
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/OrbitControls.js'
-import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/TransformControls.js'
+//import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/TransformControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/loaders/3DMLoader.js'
 import rhino3dm from 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js'
 
@@ -30,6 +30,8 @@ V_Divisions_slider.addEventListener( 'touchend', onSliderChange, false )
 const Canopy_Depth_slider = document.getElementById( 'Canopy_Depth' )
 Canopy_Depth_slider.addEventListener( 'mouseup', onSliderChange, false )
 Canopy_Depth_slider.addEventListener( 'touchend', onSliderChange, false )
+
+let points = [];
 
 // globals
 let rhino, doc
@@ -286,12 +288,10 @@ function collectResults(responseJson) {
     loader.parse( buffer, function ( object ) 
     {
         // debug 
-        /*
         object.traverse(child => {
           if (child.material !== undefined)
             child.material = new THREE.MeshNormalMaterial()
         }, false)
-        */
 
         // clear objects from scene. do this here to avoid blink
         scene.traverse(child => {
