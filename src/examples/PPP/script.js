@@ -31,8 +31,6 @@ const Canopy_Depth_slider = document.getElementById( 'Canopy_Depth' )
 Canopy_Depth_slider.addEventListener( 'mouseup', onSliderChange, false )
 Canopy_Depth_slider.addEventListener( 'touchend', onSliderChange, false )
 
-let points = []
-
 // globals
 let rhino, doc
 
