@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.126.0/build/three.module.js'
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/OrbitControls.js'
+import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/TransformControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/loaders/3DMLoader.js'
 import rhino3dm from 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js'
 
@@ -100,90 +101,6 @@ function onChange() {
 const downloadButton = document.getElementById("downloadButton")
 downloadButton.onclick = download
 
-  /////////////////////////////////////////////////////////////////////////////
- //                            HELPER  FUNCTIONS                            //
-/////////////////////////////////////////////////////////////////////////////
-
-/**
- * Gets <input> elements from html and sets handlers
- * (html is generated from the grasshopper definition)
- */
-function getInputs() {
-  const inputs = {}
-  for (const input of document.getElementsByTagName('input')) {
-    switch (input.type) {
-      case 'number':
-        inputs[input.id] = input.valueAsNumber
-        input.onchange = onSliderChange
-        break
-      case 'range':
-        inputs[input.id] = input.valueAsNumber
-        input.onmouseup = onSliderChange
-        input.ontouchend = onSliderChange
-        break
-      case 'checkbox':
-        inputs[input.id] = input.checked
-        input.onclick = onSliderChange
-        break
-      default:
-        break
-    }
-  }
-  return inputs
-}
-
-// more globals
-let scene, camera, renderer, controls
-
-/**
- * Sets up the scene, camera, renderer, lights and controls and starts the animation
- */
-function init() {
-
-    // Rhino models are z-up, so set this as the default
-    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
-
-    // create a scene and a camera
-    scene = new THREE.Scene()
-    scene.background = new THREE.Color(1, 1, 1)
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    camera.position.set(1, -1, 1) // like perspective view
-
-    // very light grey for background, like rhino
-    scene.background = new THREE.Color('whitesmoke')
-
-    // create the renderer and add it to the html
-    renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio( window.devicePixelRatio )
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    document.body.appendChild(renderer.domElement)
-
-    // add some controls to orbit the camera
-    controls = new OrbitControls(camera, renderer.domElement)
-
-    // add a directional light
-    const directionalLight = new THREE.DirectionalLight( 0xffffff )
-    directionalLight.intensity = 2
-    scene.add( directionalLight )
-
-    const ambientLight = new THREE.AmbientLight()
-    scene.add( ambientLight )
-
-    // handle changes in the window size
-    window.addEventListener( 'resize', onWindowResize, false )
-
-    animate()
-}
-
-function loadContext() {
-  loader.load('Public_Space.3dm', function (object) {
-    object.traverse(child => {
-      child.name = 'Public_Space'
-    })
-    scene.add(object)
-  })
-}
-
 /**
  * Call appserver
  */
@@ -242,8 +159,10 @@ function collectResults(responseJson) {
     const values = responseJson.values
 
     // clear doc
+    try {
     if( doc !== undefined)
         doc.delete()
+   } catch {}
 
     //console.log(values)
     doc = new rhino.File3dm()
@@ -293,6 +212,19 @@ function collectResults(responseJson) {
                 scene.remove(child)
             }
         })
+
+        // color crvs
+      object.traverse(child => {
+        if (child.isLine) {
+          if (child.userData.attributes.geometry.userStringCount > 0) {
+            //console.log(child.userData.attributes.geometry.userStrings[0][1])
+            const col = child.userData.attributes.geometry.userStrings[0][1]
+            const threeColor = new THREE.Color( "rgb(" + col + ")")
+            const mat = new THREE.LineBasicMaterial({color:threeColor})
+            child.material = mat
+          }
+        }
+      })
 
         // add object graph from rhino model to three.js scene
         scene.add( object )
