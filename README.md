@@ -1,3 +1,7 @@
+Designed for BIMSC-21
+Faculty: David Leon; Assistant: Hesham Shawqy
+Student: Maryam Deshmukh
+
 Deployable Structure
 A transitioning design with embedded information
 
