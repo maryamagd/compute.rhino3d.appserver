@@ -13,5 +13,5 @@ The project aims to give an overview of a public space canopy project and its el
 
 ## Visually Static Data
 - Rhino Context Model
-- Google Map API
+- OpenStreet API
 - CubeMap
