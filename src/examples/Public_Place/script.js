@@ -110,6 +110,11 @@ function onChange() {
   controls.enabled = false
 
 }
+
+  /////////////////////////////////////////////////////////////////////////////
+ //                            HELPER  FUNCTIONS                            //
+/////////////////////////////////////////////////////////////////////////////
+
 /**
  * Gets <input> elements from html and sets handlers
  * (html is generated from the grasshopper definition)
@@ -146,39 +151,39 @@ let scene, camera, renderer, controls
  */
 function init() {
 
-  // Rhino models are z-up, so set this as the default
-  THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
+    // Rhino models are z-up, so set this as the default
+    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
 
-  // create a scene and a camera
-  scene = new THREE.Scene()
-  scene.background = new THREE.Color(1, 1, 1)
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-  camera.position.set(1, -1, 1) // like perspective view
+    // create a scene and a camera
+    scene = new THREE.Scene()
+    scene.background = new THREE.Color(1, 1, 1)
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
+    camera.position.set(1, -1, 1) // like perspective view
 
-  // very light grey for background, like rhino
-  scene.background = new THREE.Color('whitesmoke')
+    // very light grey for background, like rhino
+    scene.background = new THREE.Color('whitesmoke')
 
-  // create the renderer and add it to the html
-  renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setPixelRatio( window.devicePixelRatio )
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  document.body.appendChild(renderer.domElement)
+    // create the renderer and add it to the html
+    renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio( window.devicePixelRatio )
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
 
-  // add some controls to orbit the camera
-  controls = new OrbitControls(camera, renderer.domElement)
+    // add some controls to orbit the camera
+    controls = new OrbitControls(camera, renderer.domElement)
 
-  // add a directional light
-  const directionalLight = new THREE.DirectionalLight( 0xffffff )
-  directionalLight.intensity = 2
-  scene.add( directionalLight )
+    // add a directional light
+    const directionalLight = new THREE.DirectionalLight( 0xffffff )
+    directionalLight.intensity = 2
+    scene.add( directionalLight )
 
-  const ambientLight = new THREE.AmbientLight()
-  scene.add( ambientLight )
+    const ambientLight = new THREE.AmbientLight()
+    scene.add( ambientLight )
 
-  // handle changes in the window size
-  window.addEventListener( 'resize', onWindowResize, false )
+    // handle changes in the window size
+    window.addEventListener( 'resize', onWindowResize, false )
 
-  animate()
+    animate()
 }
 
 function loadContext() {
@@ -203,30 +208,6 @@ async function compute() {
   Object.keys(data.inputs).forEach(key => url.searchParams.append(key, data.inputs[key]))
   console.log(url.toString())
   
-  
-  showSpinner(true)
-
-  // initialise 'data' object that will be used by compute()
-  const data = {
-    definition: definition,
-    inputs: {
-      'Column_Radius': Column_Radius_slider.valueAsNumber,
-      'Column_Height': Column_Height_slider.valueAsNumber,
-      'points': points,
-      'U_Divisions': U_Divisions_slider.valueAsNumber,
-      'V_Divisions': V_Divisions_slider.valueAsNumber,
-      'Canopy_Depth': Canopy_Depth_slider.valueAsNumber,
-    }
-  }
-
-  console.log(data.inputs)
-
-  const request = {
-    'method':'POST',
-    'body': JSON.stringify(data),
-    'headers': {'Content-Type': 'application/json'}
-  }
-
   try {
     const response = await fetch(url)
   
@@ -302,11 +283,6 @@ function collectResults(responseJson) {
       return
     }
 
-    // hack (https://github.com/mcneel/rhino3dm/issues/353)
-    const sphereAttrs = new rhino.ObjectAttributes()
-    sphereAttrs.mode = rhino.ObjectMode.Hidden
-    doc.objects().addSphere(new rhino.Sphere([0,0,0], 0.001), sphereAttrs)
-
     // load rhino doc into three.js scene
     const buffer = new Uint8Array(doc.toByteArray()).buffer
     loader.parse( buffer, function ( object ) 
@@ -321,7 +297,7 @@ function collectResults(responseJson) {
 
         // clear objects from scene. do this here to avoid blink
         scene.traverse(child => {
-            if (!child.isLight && child.name !== 'Public_Space') {
+            if (!child.isLight) {
                 scene.remove(child)
             }
         })
@@ -354,7 +330,7 @@ function collectResults(responseJson) {
 /**
  * Attempt to decode data tree item to rhino geometry
  */
-function decodeItem(item) {
+ function decodeItem(item) {
   const data = JSON.parse(item.data)
   if (item.type === 'System.String') {
     // hack for draco meshes
@@ -397,7 +373,7 @@ function decodeItem(item) {
 /**
  * The animation loop!
  */
-function animate() {
+ function animate() {
   requestAnimationFrame( animate )
   controls.update()
   renderer.render(scene, camera)
@@ -416,7 +392,7 @@ function onWindowResize() {
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
-function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
+ function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
   
   const box = new THREE.Box3();
   
@@ -452,25 +428,25 @@ function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
 /**
  * This function is called when the download button is clicked
  */
-function download () {
-    // write rhino doc to "blob"
-    const bytes = doc.toByteArray()
-    const blob = new Blob([bytes], {type: "application/octect-stream"})
+ function download () {
+  // write rhino doc to "blob"
+  const bytes = doc.toByteArray()
+  const blob = new Blob([bytes], {type: "application/octect-stream"})
 
-    // use "hidden link" trick to get the browser to download the blob
-    const filename = data.definition.replace(/\.gh$/, '') + '.3dm'
-    const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
-    link.download = filename
-    link.click()
+  // use "hidden link" trick to get the browser to download the blob
+  const filename = data.definition.replace(/\.gh$/, '') + '.3dm'
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
 }
 
 /**
- * Shows or hides the loading spinner
- */
+* Shows or hides the loading spinner
+*/
 function showSpinner(enable) {
-  if (enable)
-    document.getElementById('loader').style.display = 'block'
-  else
-    document.getElementById('loader').style.display = 'none'
+if (enable)
+  document.getElementById('loader').style.display = 'block'
+else
+  document.getElementById('loader').style.display = 'none'
 }
