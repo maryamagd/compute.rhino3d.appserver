@@ -1,5 +1,6 @@
 Designed for BIMSC Data Management - 21
-Faculty: David Leon; Assistant: Hesham Shawqy
+Faculty: David Leon;
+Assistant: Hesham Shawqy
 Student: Maryam Deshmukh
 
 Deployable Structure
