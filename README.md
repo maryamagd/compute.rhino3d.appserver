@@ -16,5 +16,5 @@ Movable Points: For support location
 U & V Divisions: Increase or Decrease
 Visually Static Data
 Rhino Context Model
-OpenStreet API
+GoogleMaps API
 CubeMap
