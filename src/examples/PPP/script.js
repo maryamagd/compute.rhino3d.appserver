@@ -15,7 +15,7 @@ const data = {
 }
 
 
-const definition = "Canopy_Maker.gh";
+const definition = "Canopy_maker.gh";
 
 // setup input change events
 const Column_Radius_slider = document.getElementById( 'Column_Radius' )
@@ -97,11 +97,13 @@ function init() {
     // create a scene and a camera
     scene = new THREE.Scene()
     scene.background = new THREE.Color(1, 1, 1)
+    let material, cubeMap
+  cubeMap = new THREE.CubeTextureLoader()
+    .setPath("./Cubemap/")
+    .load(["px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png"]);
+  scene.background = cubeMap
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
     camera.position.set(1, -1, 1) // like perspective view
-
-    // very light grey for background, like rhino
-    scene.background = new THREE.Color('whitesmoke')
 
     // create the renderer and add it to the html
     renderer = new THREE.WebGLRenderer({ antialias: true })

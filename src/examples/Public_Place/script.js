@@ -10,9 +10,12 @@ loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
 
 // initialise 'data' object that will be used by compute()
 const data = {
-  definition: 'Canopy_Maker.gh',
+  definition: 'Canopy_maker.gh',
   inputs: getInputs()
 }
+
+
+const definition = "Canopy_maker.gh";
 
 // setup input change events
 const Column_Radius_slider = document.getElementById( 'Column_Radius' )
@@ -31,6 +34,9 @@ const Canopy_Depth_slider = document.getElementById( 'Canopy_Depth' )
 Canopy_Depth_slider.addEventListener( 'mouseup', onSliderChange, false )
 Canopy_Depth_slider.addEventListener( 'touchend', onSliderChange, false )
 
+const downloadButton = document.getElementById("downloadButton")
+downloadButton.onclick = download
+
 let points = []
 
 // globals
@@ -38,13 +44,14 @@ let rhino, doc
 
 rhino3dm().then(async m => {
     console.log('Loaded rhino3dm.')
-   rhino = m // global
+    rhino = m
 
     init()
     loadContext()
     rndPts()
     compute()
 })
+
 
 function rndPts() {
   // generate Inital points
@@ -144,7 +151,7 @@ function onChange() {
 }
 
 // more globals
-let scene, camera, renderer, controls
+var scene, camera, renderer, controls, raycaster, selectedMaterial;
 
 /**
  * Sets up the scene, camera, renderer, lights and controls and starts the animation
@@ -256,9 +263,12 @@ function collectResults(responseJson) {
           if (values[i].ParamName == "RH_OUT:area") {
             //area = JSON.parse(responseJson.values[i].InnerTree['{ 0; }'][0].data)
             area = Math.round(branch[j].data)
-
-            console.log(area)
+            console.log('area = ' + area + 'm²')
           }
+          // console.log(values[i].ParamName)
+
+        if (rhinoObject !== null) {
+          doc.objects().add(rhinoObject, null);
           }
         }
       }
@@ -287,9 +297,12 @@ function collectResults(responseJson) {
 
         // clear objects from scene. do this here to avoid blink
         scene.traverse(child => {
-            if (!child.isLight) {
-                scene.remove(child)
-            }
+          if (
+            child.userData.hasOwnProperty("objectType") &&
+            child.userData.objectType === "File3dm"
+          ) {
+            scene.remove(child)
+          }
         })
 
         // color crvs
