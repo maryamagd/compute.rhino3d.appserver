@@ -18,6 +18,3 @@ Visually Static Data
 Rhino Context Model
 OpenStreet API
 CubeMap
-## Other Information
-- [API Endpoints](docs/endpoints.md) the server supports
-- [Client Code](docs/clientcode.md) example for calling the AppServer
