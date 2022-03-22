@@ -4,6 +4,10 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/exampl
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/loaders/3DMLoader.js'
 import rhino3dm from 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js'
 
+let raycaster
+const mouse = new THREE.Vector2()
+window.addEventListener( 'click', onClick, false);
+
 // set up loader for converting the results to threejs
 const loader = new Rhino3dmLoader()
 loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
@@ -152,6 +156,14 @@ function init() {
 
     let container = document.getElementById( 'container' )
     if (container) container.remove()
+
+    // scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
+
+    const grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
+    grid.material.opacity = 0.2;
+            grid.rotation.x = - Math.PI / 2;
+    grid.material.transparent = true;
+    scene.add( grid );
 
     // reset object colours
     scene.traverse((child, i) => {
