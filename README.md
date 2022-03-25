@@ -1,7 +1,7 @@
 <h1>PPP: Public Place Project</h1>
 
-Designed for BIMSC Data Management - 21 at MaCAD
-Faculty: David Leon;
+Designed for BIMSC Data Management 21/22 in Master's of Advanced Computation for Architecture & Design at IaaC
+<li>Faculty: David Leon;</li>
 Assistant: Hesham Shawqy
 Student: Maryam Deshmukh
 
