@@ -12,7 +12,6 @@ The project aims to give an overview of a public space canopy project and its el
 
 Parametric Data
 Expansion Phase: Deployment apertures
-Movable Points: For support location
 U & V Divisions: Increase or Decrease
 Visually Static Data
 Rhino Context Model
