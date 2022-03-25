@@ -384,6 +384,9 @@ function animate() {
   requestAnimationFrame( animate )
   controls.update()
   renderer.render(scene, camera)
+  scene.rotation.z += 0.00009;
+  scene.rotation.y += 0.00005;
+  scene.rotation.x += 0.00005
 }
 
 /**
