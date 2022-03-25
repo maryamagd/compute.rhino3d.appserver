@@ -5,7 +5,7 @@ Designed for BIMSC Data Management 21/22 in Master's of Advanced Computation for
 Assistant: Hesham Shawqy
 <li>Student: Maryam Deshmukh</li>
 
-Deployable Structure
+<h4>Deployable Structure</h4>
 A transitioning design with embedded information
 
 The project aims to give an overview of a public space canopy project and its elements through progressing construction/ expansion phases, adding altering supports with each phase.
