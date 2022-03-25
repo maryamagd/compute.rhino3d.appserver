@@ -3,7 +3,7 @@
 Designed for BIMSC Data Management 21/22 in Master's of Advanced Computation for Architecture & Design at IaaC
 <li>Faculty: David Leon;</li>
 Assistant: Hesham Shawqy
-Student: Maryam Deshmukh
+<li>Student: Maryam Deshmukh</li>
 
 Deployable Structure
 A transitioning design with embedded information
